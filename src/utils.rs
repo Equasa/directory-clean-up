@@ -38,7 +38,7 @@ pub fn confirm(prompt: &str) -> io::Result<bool> {
     terminal::enable_raw_mode()?;
 
     execute!(stdout, cursor::MoveToColumn(0))?;
-    print!("{} [y/n] ", prompt);
+    println!("{} [y/n] ", prompt);
     stdout.flush()?;
 
     let answer = loop {
@@ -47,7 +47,10 @@ pub fn confirm(prompt: &str) -> io::Result<bool> {
             match key_event.code {
                 KeyCode::Char('y') | KeyCode::Char('Y') => break true,
                 KeyCode::Char('n') | KeyCode::Char('N') => break false,
-                KeyCode::Char('q') | KeyCode::Char('Q') => std::process::exit(0),
+                KeyCode::Char('q') | KeyCode::Char('Q') => {
+                    terminal::disable_raw_mode()?;  
+                    println!();
+                    std::process::exit(0)},
                 _ => {} 
             }
         }
